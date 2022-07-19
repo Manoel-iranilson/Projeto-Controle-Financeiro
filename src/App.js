@@ -16,12 +16,12 @@ function App() {
 
   useEffect(() => {
     const amountExpense = transactionsList
-      .filter((item) => item.expense)
-      .map((transaction) => Number(transaction.amount));
+      .filter((item) => item.isExpense)
+      .map((transactions) => Number(transactions.value));
 
     const amountIncome = transactionsList
-      .filter((item) => !item.expense)
-      .map((transaction) => Number(transaction.amount));
+      .filter((item) => !item.isExpense)
+      .map((transactions) => Number(transactions.value));
 
     const expense = amountExpense.reduce((acc, cur) => acc + cur, 0).toFixed(2);
     const income = amountIncome.reduce((acc, cur) => acc + cur, 0).toFixed(2);
@@ -33,12 +33,23 @@ function App() {
     setTotal(`${Number(income) < Number(expense) ? "-" : ""} R$ ${total}`);
   }, [transactionsList]);
 
+  function add(transactions) {
+    const newTransaction = [...transactionsList, transactions];
+    setTransactionsList(newTransaction);
+    console.log(transactions);
+    localStorage.setItem("transactions", JSON.stringify(newTransaction));
+  }
+
   return (
     <>
       <GlobalStyle />
       <Header />
       <Summary income={income} expense={expense} total={total} />
-      <Form />
+      <Form
+        add={add}
+        transactionsList={transactionsList}
+        setTransactionsList={setTransactionsList}
+      />
     </>
   );
 }
